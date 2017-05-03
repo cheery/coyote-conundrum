@@ -1,0 +1,7 @@
+file =>
+    empty {}
+    statements
+
+statements =>
+    statement
+    append { statements statement }

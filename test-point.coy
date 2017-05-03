@@ -1,0 +1,67 @@
+module main; // might be `package main;` or just left out in released version
+import std.io; // the `std` package name used for the (optional) standard library is purely by convention
+import std.string: format; // we just need the `format` function from std.string
+
+struct Point
+{
+    float x, y;
+    Point opAdd(Point p) { return Point(x + p.x, y + p.y); }
+    Point opDiv(float f) { return Point(x / f, y / f); }
+
+    string toString() { return format("(%f,%f)", x, y); }
+}
+class Polygon
+{
+    Point[] points;
+    this(Point[] p ...)
+    {
+        points = p.dup; // `p.dup` is a shallow copy of array `p`
+    }
+
+    // we don't have a property syntax yet
+    Point getCenter()
+    {
+        Point sum = Point(0.0f, 0.0f);
+        foreach(point; points)
+            sum += point; // operator overloading used here (opAdd above)
+        return sum / points.length;
+    }
+
+    string toString()
+    {
+        string ret; // automagically initialized to empty string
+        foreach(i, point; points) // `i` is current index
+        {
+            if(i)
+                ret ~= ","; // append to string
+            ret ~= point.toString();
+        }
+        return ret;
+    }
+    void print()
+    {
+        writeln(this); // exactly the same as `writeln(toString())`
+    }
+}
+
+void main()
+{
+    Point[] points; // automatically initialized to empty array
+
+    write("Number of points: ");
+
+    // warning: there's no error checking done here
+    // scan is smart: it knows that points.length is uword, not uint!
+    scan("%u", points.length); //< don't know of a better function name yet
+    foreach(i, out point; points) // `point` is (writable) points[i]
+    {
+        write("P%u: ", i + 1);
+        scan("%f,%f", point.x, point.y);
+    }
+
+    Polygon poly = new Polygon(points);
+
+    writeln("POLYGON:");
+    poly.print();
+    writeln("Center: ", poly.getCenter());
+}

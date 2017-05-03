@@ -1,0 +1,43 @@
+import c, chartparser, grammar_language
+
+language = grammar_language.read_file(dir ++ "coyote.grammar")
+language.new_parser = chartparser.preprocess(
+    language.grammar,
+    language.table.nonterminal("file"))
+
+main = ():
+    source = "test-point.coy"
+    try
+        parse_file(source)
+    except Exception as e
+        print_traceback(e)
+
+parse_file = (source):
+    parser = language.new_parser()
+    stream = c.open_token_stream(source)
+    keywords = language.table.keywords
+    terminals = language.table.terminals
+    while stream.current != ""
+        token = c.token_chop(stream)
+        if not token
+            continue
+        if token.name == "identifier" and token.value in keywords
+            terminal = terminals.get(keywords.get(token.value))
+        else
+            terminal = terminals.get(keywords.get(token.name, token.name))
+        assert parser.expecting(terminal)
+            print("expected", parser.expect...)
+            print(c.format_source(token), "GOT", terminal, token)
+            "coy parsing failed"
+        parser.step(terminal, token, token.lno, token.lno)
+    assert parser.accepted
+        print("expected", parser.expect...)
+        print(c.format_source(token), "GOT", terminal, token)
+        "coy parsing failed"
+    argl = []
+    post = (rule, args, start, stop):
+        cell = rule.annotation(actions, args, argl)
+        if isinstance(cell, Cell)
+            return Origin(cell, 0, start, stop)
+        return cell 
+    out = parser.traverse(post)
